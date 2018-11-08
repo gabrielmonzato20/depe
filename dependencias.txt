@@ -8,3 +8,4 @@ http://138.68.55.232
 usuario:       senha:
 http://52.90.7.85/lopes/relatorio.php
 unbutu
+botsmart.admin
