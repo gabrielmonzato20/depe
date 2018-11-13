@@ -9,3 +9,19 @@ usuario:       senha:
 http://52.90.7.85/lopes/relatorio.php
 unbutu
 botsmart.admin
+//
+SELECT DISTINCT pc.dt_inclusao_pergunta AS dt_inclusao_pergunta,
+                            (SELECT count(numero_celular) FROM campanha where  dt_inclusao =  c.dt_inclusao ) AS contatos_para_disparo,
+                            count(DISTINCT pc.numero_celular) AS contatos_disparados,
+                            (SELECT count(DISTINCT numero_celular) FROM pesquisa_controle where resposta <> '' AND date(dt_inclusao_pergunta) = date(pc.dt_inclusao_pergunta) ) AS Contatos_ha_disparar,
+                            (SELECT count(numero_celular) FROM pesquisa_controle pc1 where resposta = '' AND pc1.id_pergunta_atual > 1 AND date(dt_inclusao_pergunta) = date(pc.dt_inclusao_pergunta)) AS Responderam_1º,
+                                                        (SELECT count(numero_celular) FROM pesquisa_controle pc1 where resposta <> "" AND pc1.id_pergunta_atual = '1' AND date(dt_inclusao_pergunta) = date(pc.dt_inclusao_pergunta)) AS  N_Responderam_1º,
+                            count(pc.numero_celular) AS envios_total,
+                            (SELECT count(numero_celular) FROM pesquisa_controle where resposta <> '' AND (dt_inclusao_pergunta) = (pc.dt_inclusao_pergunta)) AS recebimento_total,
+                            count(pc.numero_celular)  + (SELECT count(numero_celular) FROM pesquisa_controle where resposta <> '' AND (dt_inclusao_pergunta) = (pc.dt_inclusao_pergunta)) AS mensagen_total,
+                                                        (SELECT count(numero_celular) FROM pesquisa_controle pc1 where resposta = '' AND pc1.id_pergunta_atual = '4' AND date(dt_inclusao_pergunta) = date(pc.dt_inclusao_pergunta)) AS finalizados
+                        FROM pesquisa_controle pc JOIN 
+                             perguntas p ON p.id = pc.id_pergunta_atual LEFT JOIN
+                             perguntas_adicionais pa ON pa.id = pc.id_pergunta_adicional LEFT JOIN
+                             campanha c ON c.numero_celular = pc.numero_celular  GROUP BY DATE(pc.dt_inclusao_pergunta);
+//
